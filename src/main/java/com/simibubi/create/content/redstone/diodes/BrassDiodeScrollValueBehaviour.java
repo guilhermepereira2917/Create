@@ -23,7 +23,7 @@ public class BrassDiodeScrollValueBehaviour extends ScrollValueBehaviour {
 
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-		return new ValueSettingsBoard(label, 60, 10,
+		return new ValueSettingsBoard(label, 2, 60, 10,
 			CreateLang.translatedOptions("generic.unit", "ticks", "seconds", "minutes"),
 			new ValueSettingsFormatter(this::formatSettings));
 	}

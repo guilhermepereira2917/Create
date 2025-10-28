@@ -264,7 +264,7 @@ public class ChassisBlockEntity extends SmartBlockEntity {
 			ImmutableList<Component> rows = ImmutableList.of(CreateLang.translateDirect("contraptions.chassis.distance"));
 			ValueSettingsFormatter formatter =
 				new ValueSettingsFormatter(vs -> new ValueSettings(vs.row(), vs.value() + 1).format());
-			return new ValueSettingsBoard(label, max - 1, 1, rows, formatter);
+			return new ValueSettingsBoard(label, 0, max - 1, 1, rows, formatter);
 		}
 
 		@Override

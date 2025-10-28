@@ -56,17 +56,15 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 
 	@Override
 	protected void init() {
-		int maxValue = board.maxValue();
 		maxLabelWidth = 0;
-		int milestoneCount = maxValue / board.milestoneInterval() + 1;
-		int scale = maxValue > 128 ? 1 : 2;
+		int milestoneCount = getRange() / board.milestoneInterval() + 1;
 
 		for (Component component : board.rows())
 			maxLabelWidth = Math.max(maxLabelWidth, font.width(component));
 		if (iconMode)
 			maxLabelWidth = -18;
 
-		valueBarWidth = (maxValue + 1) * scale + 1 + milestoneCount * milestoneSize;
+		valueBarWidth = (getRange() + 1) * getScale() + 1 + milestoneCount * milestoneSize;
 		int width = (maxLabelWidth + 14) + (valueBarWidth + 10);
 		int height = (board.rows()
 			.size() * 11);
@@ -87,7 +85,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 
 	public ValueSettings getClosestCoordinate(int mouseX, int mouseY) {
 		int row = 0;
-		int column = 0;
+		int column = board.minValue();
 		boolean milestonesOnly = hasShiftDown();
 
 		double bestDiff = Double.MAX_VALUE;
@@ -102,28 +100,32 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		row -= 1;
 
 		bestDiff = Double.MAX_VALUE;
-		for (; column <= board.maxValue(); column++) {
-			Vec2 coord = getCoordinateOfValue(row, milestonesOnly ? column * board.milestoneInterval() : column);
+		int columnStep = milestonesOnly ? board.milestoneInterval() : 1;
+		for (; column <= board.maxValue(); column += columnStep) {
+			Vec2 coord = getCoordinateOfValue(row, column);
 			double diff = Math.abs(coord.x - mouseX);
 			if (bestDiff < diff)
 				break;
 			bestDiff = diff;
 		}
-		column -= 1;
 
-		return new ValueSettings(row,
-			milestonesOnly ? Math.min(column * board.milestoneInterval(), board.maxValue()) : column);
+		column -= columnStep;
+		column = Math.min(column, board.maxValue());
+
+		return new ValueSettings(row, column);
 	}
 
 	public Vec2 getCoordinateOfValue(int row, int column) {
-		int scale = board.maxValue() > 128 ? 1 : 2;
+		int adjustedColumn = column - board.minValue();
+
 		float xOut =
-			guiLeft + ((Math.max(1, column) - 1) / board.milestoneInterval()) * milestoneSize + column * scale + 1.5f;
+			guiLeft + ((Math.max(1, adjustedColumn) - 1) / board.milestoneInterval()) * milestoneSize + adjustedColumn * getScale() + 1.5f;
+
 		xOut += maxLabelWidth + 14 + 4;
 
-		if (column % board.milestoneInterval() == 0)
+		if (adjustedColumn % board.milestoneInterval() == 0)
 			xOut += milestoneSize / 2;
-		if (column > 0)
+		if (adjustedColumn > 0)
 			xOut += milestoneSize;
 
 		float yOut = guiTop + (row + .5f) * 11 - .5f;
@@ -134,8 +136,6 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 	protected void renderWindow(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
 		int x = guiLeft;
 		int y = guiTop;
-		int milestoneCount = board.maxValue() / board.milestoneInterval() + 1;
-		int scale = board.maxValue() > 128 ? 1 : 2;
 
 		Component title = board.title();
         Component tip =
@@ -144,7 +144,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 
 		int fattestLabel = Math.max(font.width(tip), font.width(title));
 		if (iconMode)
-			for (int i = 0; i <= board.maxValue(); i++)
+			for (int i = board.minValue(); i <= board.maxValue(); i++)
 				fattestLabel = Math.max(fattestLabel, font.width(board.formatter()
 					.format(new ValueSettings(0, i))));
 
@@ -188,13 +188,14 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 				graphics.drawString(font, component, x, y + 1, 0x442000, false);
 			}
 
+			int milestoneCount = getRange() / board.milestoneInterval() + 1;
 			int milestoneX = valueBarX;
 			for (int milestone = 0; milestone < milestoneCount; milestone++) {
 				if (iconMode)
 					AllGuiTextures.VALUE_SETTINGS_WIDE_MILESTONE.render(graphics, milestoneX, y + 1);
 				else
 					AllGuiTextures.VALUE_SETTINGS_MILESTONE.render(graphics, milestoneX, y + 1);
-				milestoneX += milestoneSize + board.milestoneInterval() * scale;
+				milestoneX += milestoneSize + board.milestoneInterval() * getScale();
 			}
 
 			y += 11;
@@ -291,7 +292,7 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 	public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
 		ValueSettings closest = getClosestCoordinate((int) pMouseX, (int) pMouseY);
 		int column = closest.value() + ((int) Math.signum(pScrollY)) * (hasShiftDown() ? board.milestoneInterval() : 1);
-		column = Mth.clamp(column, 0, board.maxValue());
+		column = Mth.clamp(column, board.minValue(), board.maxValue());
 		if (column == closest.value())
 			return false;
 		setCursor(getCoordinateOfValue(closest.row(), column));
@@ -332,4 +333,12 @@ public class ValueSettingsScreen extends AbstractSimiScreen {
 		super.onClose();
 	}
 
+	private int getScale() {
+		return getRange() > 128 ? 1 : 2;
+
+	}
+
+	private int getRange() {
+		return board.maxValue() - board.minValue();
+	}
 }

@@ -167,7 +167,7 @@ public class ValveHandleBlockEntity extends HandCrankBlockEntity {
 					.withStyle(ChatFormatting.BOLD),
 				Component.literal("\u27f2")
 					.withStyle(ChatFormatting.BOLD));
-			return new ValueSettingsBoard(label, 180, 45, rows, new ValueSettingsFormatter(this::formatValue));
+			return new ValueSettingsBoard(label, 1, 180, 45, rows, new ValueSettingsFormatter(this::formatValue));
 		}
 
 		@Override

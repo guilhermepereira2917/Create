@@ -30,7 +30,7 @@ public class ScrollOptionBehaviour<E extends Enum<E> & INamedIconOptions> extend
 
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-		return new ValueSettingsBoard(label, max, 1, ImmutableList.of(Component.literal("Select")),
+		return new ValueSettingsBoard(label, 0, max, 1, ImmutableList.of(Component.literal("Select")),
 			new ScrollOptionSettingsFormatter(options));
 	}
 

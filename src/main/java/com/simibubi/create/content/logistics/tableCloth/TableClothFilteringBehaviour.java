@@ -76,7 +76,7 @@ public class TableClothFilteringBehaviour extends FilteringBehaviour {
 
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
-		return new ValueSettingsBoard(getLabel(), 100, 10, CreateLang.translatedOptions("table_cloth", "amount"),
+		return new ValueSettingsBoard(getLabel(), 1, 100, 10, CreateLang.translatedOptions("table_cloth", "amount"),
 			new ValueSettingsFormatter(this::formatValue));
 	}
 

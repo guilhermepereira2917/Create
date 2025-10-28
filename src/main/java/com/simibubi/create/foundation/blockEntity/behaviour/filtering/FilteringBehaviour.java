@@ -271,7 +271,7 @@ public class FilteringBehaviour extends BlockEntityBehaviour implements ValueSet
 	@Override
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
 		int maxAmount = getMaxStackSize(hitResult.getDirection());
-		return new ValueSettingsBoard(CreateLang.translateDirect("logistics.filter.extracted_amount"), maxAmount, 16,
+		return new ValueSettingsBoard(CreateLang.translateDirect("logistics.filter.extracted_amount"), 1, maxAmount, 16,
 			CreateLang.translatedOptions("logistics.filter", "up_to", "exactly"),
 			new ValueSettingsFormatter(this::formatValue));
 	}

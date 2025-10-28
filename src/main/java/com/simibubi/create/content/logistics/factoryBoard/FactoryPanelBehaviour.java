@@ -938,7 +938,7 @@ public class FactoryPanelBehaviour extends FilteringBehaviour implements MenuPro
 	public ValueSettingsBoard createBoard(Player player, BlockHitResult hitResult) {
 		int maxAmount = 100;
 		return new ValueSettingsBoard(CreateLang.translate("factory_panel.target_amount")
-			.component(), maxAmount, 10,
+			.component(), 0, maxAmount, 10,
 			List.of(CreateLang.translate("schedule.condition.threshold.items")
 					.component(),
 				CreateLang.translate("schedule.condition.threshold.stacks")

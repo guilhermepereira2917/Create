@@ -28,12 +28,12 @@ public class KineticScrollValueBehaviour extends ScrollValueBehaviour {
 			Component.literal("\u27f2")
 				.withStyle(ChatFormatting.BOLD));
 		ValueSettingsFormatter formatter = new ValueSettingsFormatter(this::formatSettings);
-		return new ValueSettingsBoard(label, 256, 32, rows, formatter);
+		return new ValueSettingsBoard(label, 0, 256, 32, rows, formatter);
 	}
 
 	@Override
 	public void setValueSettings(Player player, ValueSettings valueSetting, boolean ctrlHeld) {
-		int value = Math.max(1, valueSetting.value());
+		int value = Math.max(0, valueSetting.value());
 		if (!valueSetting.equals(getValueSettings()))
 			playFeedbackSound(this);
 		setValue(valueSetting.row() == 0 ? -value : value);
@@ -45,7 +45,7 @@ public class KineticScrollValueBehaviour extends ScrollValueBehaviour {
 	}
 
 	public MutableComponent formatSettings(ValueSettings settings) {
-		return CreateLang.number(Math.max(1, Math.abs(settings.value())))
+		return CreateLang.number(Math.max(0, Math.abs(settings.value())))
 			.add(CreateLang.text(settings.row() == 0 ? "\u27f3" : "\u27f2")
 				.style(ChatFormatting.BOLD))
 			.component();
